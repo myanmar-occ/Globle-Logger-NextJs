@@ -1,6 +1,5 @@
 // import { PrismaClient } from "@prisma/client";
 
-
 // // ページがリロードされるたびに PrismaClient インスタンスが生成され、
 // // それらが DB 接続をして「 FATAL: too many connections」となることを抑制するため
 // // PrismaClient のインスタンスをシングルトンにするための処理。
@@ -21,7 +20,6 @@
 
 import { PrismaClient } from "@prisma/client";
 import { dbLog } from "./logger";
-
 
 const createPrismaClient = () => {
   const prisma = new PrismaClient({
@@ -50,8 +48,9 @@ const createPrismaClient = () => {
         query = query.replace(`$${index + 1}`, JSON.stringify(param));
       });
 
-      console.log({ query, duration: e.duration });
-      dbLog.info(query);
+      /* optional */
+      // console.log({ query, duration: e.duration });
+      // dbLog.info(query);
     } catch (err) {
       console.error("Failed to process query log", err);
       console.log(e);
