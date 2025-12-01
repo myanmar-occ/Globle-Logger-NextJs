@@ -82,59 +82,56 @@ export default prisma;
 </div>
 
 ## Logger Usage
+### For Client
+- normal use
 ```javascript
-import { PrismaClient } from "@prisma/client";
-import { dbLog } from "./GlobleLogger/logger";
+"use client";
+import { useEffect } from "react";
+import { clientLog } from "@/app/_utils/GlobleLogger/clientLog";
 
-const createPrismaClient = () => {
-  const prisma = new PrismaClient({
-    log: [
-      {
-        emit: "stdout",
-        level: "error",
-      },
-      {
-        emit: "stdout",
-        level: "warn",
-      },
-      {
-        emit: "event",
-        level: "query",
-      },
-    ],
-  });
+export default function Page() {
+   useEffect(() => {
+    clientLog.trace("This is info trace");
+    clientLog.debug("This is debug log");
+    clientLog.info("This is info log");
+    clientLog.warn("This is warn log");
+    clientLog.error("This is error log");
+    clientLog.fatal("This is fatal log");
+  }, []);
 
-  prisma.$on("query", (e) => {
-    try {
-      const paramsArray = JSON.parse(e.params);
-      let query = e.query;
-      paramsArray.forEach((param: any, index: number) => {
-        query = query.replace(`$${index + 1}`, JSON.stringify(param));
-      });
+  return (
+    <main>
+      <h1>Page</h1>
+    </main>
+  );
+}
+```
+- function start end use
+```javascript
+"use client";
+import { clientLog } from "@/app/_utils/GlobleLogger/clientLog";
+import { clientLogStartEnd } from "@/app/_utils/GlobleLogger/clientLogStartEnd";
 
-      /* optional */
-      // console.log({ query, duration: e.duration });
-      // dbLog.info(query);
+export default function Page() {
+  // Define a label for this function (used in the logs)
+  const funcName = {
+    onSubmit: "onSubmit",
+  };
 
-    } catch (err) {
-      console.error("Failed to process query log", err);
-      console.log(e);
+  // Wrap your handler with clientLogStartEnd to log start + end of execution
+  const onSubmit = clientLogStartEnd(
+    funcName.onSubmit, // Function name shown in the logs
+    () => {
+      clientLog.info("Submit handler ran successfully"); // Your actual logic
     }
-  });
+  );
 
-  return prisma;
-};
-
-type PrismaClientSingleton = ReturnType<typeof createPrismaClient>;
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClientSingleton | undefined;
-};
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+  return (
+    <main>
+      <button onClick={onSubmit}>Submit</button>
+    </main>
+  );
 }
 
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
-export default prisma;
+
 ```
