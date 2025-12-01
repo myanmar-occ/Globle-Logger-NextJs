@@ -80,3 +80,61 @@ export default prisma;
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/clientLog-move-folder.png" />
 </div>
+
+## Logger Usage
+```javascript
+import { PrismaClient } from "@prisma/client";
+import { dbLog } from "./GlobleLogger/logger";
+
+const createPrismaClient = () => {
+  const prisma = new PrismaClient({
+    log: [
+      {
+        emit: "stdout",
+        level: "error",
+      },
+      {
+        emit: "stdout",
+        level: "warn",
+      },
+      {
+        emit: "event",
+        level: "query",
+      },
+    ],
+  });
+
+  prisma.$on("query", (e) => {
+    try {
+      const paramsArray = JSON.parse(e.params);
+      let query = e.query;
+      paramsArray.forEach((param: any, index: number) => {
+        query = query.replace(`$${index + 1}`, JSON.stringify(param));
+      });
+
+      /* optional */
+      // console.log({ query, duration: e.duration });
+      // dbLog.info(query);
+
+    } catch (err) {
+      console.error("Failed to process query log", err);
+      console.log(e);
+    }
+  });
+
+  return prisma;
+};
+
+type PrismaClientSingleton = ReturnType<typeof createPrismaClient>;
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientSingleton | undefined;
+};
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
+
+if (process.env.NODE_ENV !== "production") global.prisma = prisma;
+export default prisma;
+```
