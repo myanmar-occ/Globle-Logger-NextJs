@@ -2,7 +2,7 @@ This logger is built with [log4js](https://www.npmjs.com/package/log4js) for [Ne
 
 ## Getting Started
 
-#### 1. Install Log4js
+#### 1. Install [log4js](https://www.npmjs.com/package/log4js)
 
 ```sh
 npm i log4js
