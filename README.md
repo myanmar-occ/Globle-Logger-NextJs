@@ -75,5 +75,10 @@ export default prisma;
 ```
 #### 3. Move the file into the `clientLog` folder inside the `app/api` directory.
 
+<div>
+  <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/clientLog-move-folder.png" />
+</div>
+
+
 
 
