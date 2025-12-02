@@ -1,22 +1,20 @@
-This logger is built with [log4js](https://www.npmjs.com/package/log4js) for [Next.js](https://nextjs.org) applications with [Prisma](https://prisma.io) as the ORM and can be used for client, server, and database logging.
+このロガーは、[log4js](https://www.npmjs.com/package/log4js) を使用して [Next.js](https://nextjs.org) アプリケーション向けに作成されており、ORM として [Prisma](https://prisma.io) を利用しつつ、クライアント・サーバー・データベースのログを記録できます。
+## はじめに
 
-## Getting Started
-
-#### 1. Install [log4js](https://www.npmjs.com/package/log4js)
+#### 1. [log4js](https://www.npmjs.com/package/log4js) をインストール
 
 ```sh
 npm i log4js
 ```
 
-## Logger Setup
+## ロガーのセットアップ
 
-#### 1. Move the file into the `GlobalLogger` folder inside the `app/_utils` directory. If you don’t have an `_utils` folder yet, create `app/_utils` first.
-
+#### 1. `app/_utils` ディレクトリ内の `GlobalLogger` フォルダにファイルを移動します。_utils フォルダがない場合は、先に `app/_utils` を作成してください。
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/move-folder.png"  />
 </div>
 
-#### 2. Add or update the following code in your `prismaSingleton`.
+#### 2. `prismaSingleton` に次のコードを追加または更新します。
 
 ```javascript
 import { PrismaClient } from "@prisma/client";
@@ -75,15 +73,15 @@ if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 export default prisma;
 ```
 
-#### 3. Move the file into the `clientLog` folder inside the `app/api` directory.
+#### 3. `app/api` ディレクトリ内の `clientLog` フォルダにファイルを移動します。
 
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/clientLog-move-folder.png" />
 </div>
 
-## Logger Usage
-### For Client
-- Logs one message for each level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`) when the page mounts, to verify that clientLog works in the browser.
+## ロガーの使い方
+### クライアント側
+- ページマウント時に各レベル（`trace`, `debug`, `info`, `warn`, `error`, `fatal`）で 1 件ずつログを出力し、clientLog がブラウザで正常に動作しているか確認します。
 ```javascript
 "use client";
 import { useEffect } from "react";
@@ -106,7 +104,7 @@ export default function Page() {
   );
 }
 ```
-- Wraps the handler with `clientLogStartEnd` so the function’s start, end, and any custom logs inside are automatically recorded.
+- ハンドラーを `clientLogStartEnd` でラップすることで、関数の開始・終了と、その中で出力されるカスタムログが自動的に記録されます。
 ```javascript
 "use client";
 import { clientLog } from "@/app/_utils/GlobleLogger/clientLog";
@@ -133,8 +131,8 @@ export default function Page() {
   );
 }
 ```
-### For Server
-- Logs a successful /api/users fetch and any errors in the route handler, to verify that serverLog works on the server (backend).
+### サーバー側
+- `/api/users` の取得処理とエラーを `serverLog` でログ出力し、サーバー（バックエンド）側でのロギングが正しく動作しているか確認します。
 ```javascript
 import { NextResponse } from "next/server";
 import { logger as serverLog } from "@/app/_utils/GlobleLogger/logger";
@@ -174,7 +172,7 @@ export async function GET() {
 }
 ```
 
-- Logs each Prisma database query with bound parameters using dbLog, to verify that server-side DB logging is working correctly.
+- Prisma の各クエリをバインドパラメータ込みで dbLog に出力し、サーバー側の DB ログが正しく動作しているか確認します。
 ```javascript
 prisma.$on("query", (e) => {
     try {
@@ -194,7 +192,7 @@ prisma.$on("query", (e) => {
   });
 ```
 
-- Wraps the repository method with serverLogStartEnd so the function’s start/end, errors, and DB access (via Prisma) are all logged on the server.
+- リポジトリメソッドを `serverLogStartEnd` でラップし、関数の開始／終了、エラー、および Prisma を介した DB アクセスをすべてサーバーログに記録します。
 ```javascript
 import { prisma } from "@/app/_utils/prismaSingleton";
 import { serverLogStartEnd } from "@/app/_utils/GlobleLogger/serverLogStartEnd";
@@ -223,14 +221,14 @@ export namespace userRepository {
 }
 ```
 
-## View Log
-- You can view the log files in your project’s `logFiles` folder.
+## ログの確認
+- プロジェクト内の `logFiles` フォルダでログファイルを確認できます。
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/log-output.png" />
 </div>
 
-## Overwrite and Change
-- You can customize or override the logger config in `app/_utils/GlobleLogger/const.ts`.
+## 設定の上書き・変更
+- `app/_utils/GlobleLogger/const.ts` でロガー設定をカスタマイズまたは上書きできます。
 ```javascript
 const paths = {
   serverLog: "./logFiles/server.log",
