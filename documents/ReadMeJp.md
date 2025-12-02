@@ -228,31 +228,27 @@ export namespace userRepository {
 </div>
 
 ## 設定の上書き・変更
-- `app/_utils/GlobleLogger/const.ts` でロガー設定をカスタマイズまたは上書きできます。
+- `app/_utils/GlobleLogger/config.ts` でロガー設定をカスタマイズまたは上書きできます。
 ```javascript
-const paths = {
-  serverLog: "./logFiles/server.log",
-  dbLog: "./logFiles/db.log",
-  clientLog: "./logFiles/client.log",
+import { configType } from "./types";
+export const config: configType = {
+  path: {
+    serverLog: "./logFiles/server.log",
+    dbLog: "./logFiles/db.log",
+    clientLog: "./logFiles/client.log",
+  },
+  // can be used "xs" | "sm" | "md" | "lg" | "xl"
+  maxLogSize: {
+    server: "md",
+    db: "md",
+    client: "md",
+  },
+  // can be used "trace" | "debug" | "info" | "warn" | "error" | "fatal"
+  maxLogLevel: {
+    server: "trace",
+    db: "trace",
+    client: "trace",
+  },
 };
-
-const logSizes = {
-  xs: 1024, // 1MB
-  sm: 2048, // 2MB
-  md: 1024 * 1024 * 5, // 5MB
-  lg: 8192, // 8MB
-  xl: 16384, // 16MB
-};
-
-const logLevels = {
-  trace: "trace", // level-1
-  debug: "debug", // level-2
-  info: "info", // level-3
-  warn: "warn", // level-4
-  error: "error", // level-5
-  fatal: "fatal", // level-6
-} as const;
-
-export { paths, logSizes, logLevels };
 
 ```
