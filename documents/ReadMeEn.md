@@ -83,7 +83,7 @@ export default prisma;
 
 ## Logger Usage
 ### For Client
-- normal use
+- Logs one message for each level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`) when the page mounts, to verify that clientLog works in the browser.
 ```javascript
 "use client";
 import { useEffect } from "react";
@@ -106,7 +106,7 @@ export default function Page() {
   );
 }
 ```
-- function start end use
+- Wraps the handler with `clientLogStartEnd` so the function’s start, end, and any custom logs inside are automatically recorded.
 ```javascript
 "use client";
 import { clientLog } from "@/app/_utils/GlobleLogger/clientLog";
@@ -134,7 +134,7 @@ export default function Page() {
 }
 ```
 ### For Server
-- normal use for backend 
+- Logs a successful /api/users fetch and any errors in the route handler, to verify that serverLog works on the server (backend).
 ```javascript
 import { NextResponse } from "next/server";
 import { logger as serverLog } from "@/app/_utils/GlobleLogger/logger";
@@ -174,7 +174,7 @@ export async function GET() {
 }
 ```
 
-- normal use for db 
+- Logs each Prisma database query with bound parameters using dbLog, to verify that server-side DB logging is working correctly.
 ```javascript
 prisma.$on("query", (e) => {
     try {
@@ -194,7 +194,7 @@ prisma.$on("query", (e) => {
   });
 ```
 
-- function start end use for both backend and db 
+- Wraps the repository method with serverLogStartEnd so the function’s start/end, errors, and DB access (via Prisma) are all logged on the server.
 ```javascript
 import { prisma } from "@/app/_utils/prismaSingleton";
 import { serverLogStartEnd } from "@/app/_utils/GlobleLogger/serverLogStartEnd";
