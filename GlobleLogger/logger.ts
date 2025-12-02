@@ -9,16 +9,22 @@ log4js.configure({
       type: "file",
       filename: config.path.serverLog,
       maxLogSize: logSizes[config.maxLogSize.server],
+      backups: config.maxBackupLogFile.server,
+      keepFileExt: true,
     },
     dbLog: {
       type: "file",
       filename: config.path.dbLog,
       maxLogSize: logSizes[config.maxLogSize.db],
+      backups: config.maxBackupLogFile.db,
+      keepFileExt: true,
     },
     clientLog: {
       type: "file",
       filename: config.path.clientLog,
       maxLogSize: logSizes[config.maxLogSize.client],
+      backups: config.maxBackupLogFile.client,
+      keepFileExt: true,
     },
     // For dev, print all to console too:
     out: { type: "stdout" },

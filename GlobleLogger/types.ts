@@ -14,4 +14,9 @@ export interface configType {
     db: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
     client: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
   };
+  maxBackupLogFile: {
+    server: number;
+    db: number;
+    client: number;
+  };
 }
