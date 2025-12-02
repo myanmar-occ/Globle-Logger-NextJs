@@ -132,6 +132,93 @@ export default function Page() {
     </main>
   );
 }
+```
+### For Server
+- normal use for backend 
+```javascript
+import { NextResponse } from "next/server";
+import { logger as serverLog } from "@/app/_utils/GlobleLogger/logger";
+import { userRepository } from "@/app/_repositories/users";
 
+export async function GET() {
+  try {
+    // Fetch all users from the repository
+    const users = await userRepository.getAllUser();
 
+    // Log successful fetch with user data (or you can log only metadata)
+    serverLog.info("GET /api/users - fetched users", {
+      count: Array.isArray(users) ? users.length : undefined,
+    });
+
+    // Return the user list as JSON
+    return NextResponse.json(users);
+  } catch (e) {
+    if (e instanceof Error) {
+      // Log the error details on the server
+      serverLog.error("GET /api/users - failed to fetch users", {
+        message: e.message,
+        stack: e.stack,
+      });
+
+      // Return a generic 500 error to the client
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 }
+      );
+    }
+
+    // Handle non-Error exceptions (e.g. throwing strings or other values)
+    serverLog.warn("GET /api/users - non-Error thrown", { error: e });
+    return NextResponse.json({ error: "Unknown error" }, { status: 409 });
+  }
+}
+```
+
+- normal use for db 
+```javascript
+prisma.$on("query", (e) => {
+    try {
+      const paramsArray = JSON.parse(e.params);
+      let query = e.query;
+      paramsArray.forEach((param: any, index: number) => {
+        query = query.replace(`$${index + 1}`, JSON.stringify(param));
+      });
+
+      // Log all query
+      dbLog.info(query);
+
+    } catch (err) {
+      console.error("Failed to process query log", err);
+      console.log(e);
+    }
+  });
+```
+
+- function start end use for both backend and db 
+```javascript
+import { prisma } from "@/app/_utils/prismaSingleton";
+import { serverLogStartEnd } from "@/app/_utils/GlobleLogger/serverLogStartEnd";
+import { logger as serverLog } from "@/app/_utils/GlobleLogger/logger";
+
+export namespace userRepository {
+  // Labels for functions in this repository (used in logs)
+  const funcName = {
+    getAllUser: "getAllUser",
+  };
+  // Wrap the repository method with serverLogStartEnd so that:
+  // - the start and end of the function call are logged
+  // - errors are automatically captured
+  export const getAllUser = serverLogStartEnd(funcName.getAllUser, async () => {
+    // Execute Prisma query to fetch all users
+    const users = await prisma.user.findMany();
+
+    // Log domain-specific information (here: number of users fetched)
+    serverLog.info("userRepository.getAllUser - fetched users", {
+      count: users.length,
+    });
+
+    // Return the result back to the caller (e.g. API route)
+    return users;
+  });
+}
 ```
