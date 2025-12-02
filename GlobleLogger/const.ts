@@ -1,9 +1,3 @@
-const paths = {
-  serverLog: "./logFiles/server.log",
-  dbLog: "./logFiles/db.log",
-  clientLog: "./logFiles/client.log",
-};
-
 const logSizes = {
   xs: 1024, // 1MB
   sm: 2048, // 2MB
@@ -22,4 +16,4 @@ const logLevels = {
   fatal: "fatal", // level-6
 } as const;
 
-export { paths, logSizes, logLevels };
+export { logSizes, logLevels };
