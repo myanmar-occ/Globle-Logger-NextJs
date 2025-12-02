@@ -222,3 +222,39 @@ export namespace userRepository {
   });
 }
 ```
+
+## View Log
+- You can view the log files in your project’s `logFiles` folder.
+<div>
+  <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/log-output.png" />
+</div>
+
+## Overwrite and Change
+- You can customize or override the logger config in `app/_utils/GlobleLogger/const.ts`.
+```javascript
+const paths = {
+  serverLog: "./logFiles/server.log",
+  dbLog: "./logFiles/db.log",
+  clientLog: "./logFiles/client.log",
+};
+
+const logSizes = {
+  xs: 1024, // 1MB
+  sm: 2048, // 2MB
+  md: 1024 * 1024 * 5, // 5MB
+  lg: 8192, // 8MB
+  xl: 16384, // 16MB
+};
+
+const logLevels = {
+  trace: "trace", // level-1
+  debug: "debug", // level-2
+  info: "info", // level-3
+  warn: "warn", // level-4
+  error: "error", // level-5
+  fatal: "fatal", // level-6
+} as const;
+
+export { paths, logSizes, logLevels };
+
+```
