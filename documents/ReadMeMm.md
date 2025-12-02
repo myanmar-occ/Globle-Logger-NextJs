@@ -230,112 +230,27 @@ export namespace userRepository {
 </div>
 
 ## Overwrite and Change
-- You can customize or override the logger config in `app/_utils/GlobleLogger/const.ts`.
+- You can customize or override the logger config in `app/_utils/GlobleLogger/config.ts`.
 ```javascript
-const paths = {
-  serverLog: "./logFiles/server.log",
-  dbLog: "./logFiles/db.log",
-  clientLog: "./logFiles/client.log",
+import { configType } from "./types";
+export const config: configType = {
+  path: {
+    serverLog: "./logFiles/server.log",
+    dbLog: "./logFiles/db.log",
+    clientLog: "./logFiles/client.log",
+  },
+  // can be used "xs" | "sm" | "md" | "lg" | "xl"
+  maxLogSize: {
+    server: "md",
+    db: "md",
+    client: "md",
+  },
+  // can be used "trace" | "debug" | "info" | "warn" | "error" | "fatal"
+  maxLogLevel: {
+    server: "trace",
+    db: "trace",
+    client: "trace",
+  },
 };
 
-const logSizes = {
-  xs: 1024, // 1MB
-  sm: 2048, // 2MB
-  md: 1024 * 1024 * 5, // 5MB
-  lg: 8192, // 8MB
-  xl: 16384, // 16MB
-};
-
-const logLevels = {
-  trace: "trace", // level-1
-  debug: "debug", // level-2
-  info: "info", // level-3
-  warn: "warn", // level-4
-  error: "error", // level-5
-  fatal: "fatal", // level-6
-} as const;
-
-export { paths, logSizes, logLevels };
-
-```This logger is built with [log4js](https://www.npmjs.com/package/log4js) for [Next.js](https://nextjs.org) applications with [Prisma](https://prisma.io) as the ORM and can be used for client, server, and database logging.
-
-## Getting Started
-
-#### 1. Install [log4js](https://www.npmjs.com/package/log4js)
-
-```sh
-npm i log4js
 ```
-
-## Logger Setup
-
-#### 1. Move the file into the `GlobalLogger` folder inside the `app/_utils` directory. If you don’t have an `_utils` folder yet, create `app/_utils` first.
-
-<div>
-  <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/move-folder.png"  />
-</div>
-
-#### 2. Add or update the following code in your `prismaSingleton`.
-
-```javascript
-import { PrismaClient } from "@prisma/client";
-import { dbLog } from "./GlobleLogger/logger";
-
-const createPrismaClient = () => {
-  const prisma = new PrismaClient({
-    log: [
-      {
-        emit: "stdout",
-        level: "error",
-      },
-      {
-        emit: "stdout",
-        level: "warn",
-      },
-      {
-        emit: "event",
-        level: "query",
-      },
-    ],
-  });
-
-  prisma.$on("query", (e) => {
-    try {
-      const paramsArray = JSON.parse(e.params);
-      let query = e.query;
-      paramsArray.forEach((param: any, index: number) => {
-        query = query.replace(`$${index + 1}`, JSON.stringify(param));
-      });
-
-      /* optional */
-      // console.log({ query, duration: e.duration });
-      // dbLog.info(query);
-
-    } catch (err) {
-      console.error("Failed to process query log", err);
-      console.log(e);
-    }
-  });
-
-  return prisma;
-};
-
-type PrismaClientSingleton = ReturnType<typeof createPrismaClient>;
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClientSingleton | undefined;
-};
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
-
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
-export default prisma;
-```
-
-#### 3. Move the file into the `clientLog` folder inside the `app/api` directory.
-
-<div>
-  <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/clientLog-move-folder.png" />
-</div>
