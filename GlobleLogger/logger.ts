@@ -1,50 +1,3 @@
-// import * as log4js from "log4js";
-// import { paths, logSizes, logLevels } from "./const";
-
-// // log4J configuration
-// log4js.configure({
-//   appenders: {
-//     serverLog: {
-//       type: "file",
-//       filename: paths.serverLog,
-//       maxLogSize: logSizes.md,
-//     },
-//     dbLog: {
-//       type: "file",
-//       filename: paths.dbLog,
-//       maxLogSize: logSizes.md,
-//     },
-//     clientLog: {
-//       type: "file",
-//       filename: paths.clientLog,
-//       maxLogSize: logSizes.md,
-//     },
-//   },
-//   categories: {
-//     // categoriesでは、デフォルトを設定しなければならないんです。
-//     default: {
-//       appenders: ["serverLog"],
-//       level: logLevels.trace,
-//     },
-//     dbLog: {
-//       appenders: ["dbLog"],
-//       level: logLevels.trace,
-//     },
-//     clientLog: {
-//       appenders: ["clientLog"],
-//       level: logLevels.trace,
-//     },
-//   },
-// });
-
-// // Get the logger for logger1 and logger2 from the configuration
-// const serverLog = log4js.getLogger("serverLog");
-// const dbLog = log4js.getLogger("dbLog");
-// const clentToServerLogSender = log4js.getLogger("clientLog");
-// const logger = serverLog;
-// // export { serverLog, dbLog, clentToServerLogSender , logger };
-
-
 import * as log4js from "log4js";
 import path from "path";
 import { paths, logSizes, logLevels } from "./const";
@@ -89,8 +42,7 @@ log4js.configure({
 // ---- Export loggers ----
 const serverLog = log4js.getLogger("serverLog");
 const dbLog = log4js.getLogger("dbLog");
-// const clentToServerLogSender = log4js.getLogger("clientLog");
-const clientLog = log4js.getLogger("clientLog");
+const clentToServerLogSender = log4js.getLogger("clientLog");
 
 // ---- Optional: runtime setters (per-file overrides) ----
 function setServerLogLevel(level: string) {
@@ -100,17 +52,15 @@ function setDbLogLevel(level: string) {
   dbLog.level = level as log4js.Level["levelStr"];
 }
 function setClientLogLevel(level: string) {
-  // clentToServerLogSender.level = level as log4js.Level["levelStr"];
-  clientLog.level = level as log4js.Level["levelStr"];
+  clentToServerLogSender.level = level as log4js.Level["levelStr"];
 }
 
 const logger = serverLog;
 
 export {
-  // clentToServerLogSender,
+  clentToServerLogSender,
   serverLog,
   dbLog,
-  clientLog,
   logger,
   setServerLogLevel,
   setDbLogLevel,
