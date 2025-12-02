@@ -1,4 +1,5 @@
 このロガーは、[log4js](https://www.npmjs.com/package/log4js) を使用して [Next.js](https://nextjs.org) アプリケーション向けに作成されており、ORM として [Prisma](https://prisma.io) を利用しつつ、クライアント・サーバー・データベースのログを記録できます。
+
 ## はじめに
 
 #### 1. [log4js](https://www.npmjs.com/package/log4js) をインストール
@@ -9,7 +10,8 @@ npm i log4js
 
 ## ロガーのセットアップ
 
-#### 1. `app/_utils` ディレクトリ内の `GlobalLogger` フォルダにファイルを移動します。_utils フォルダがない場合は、先に `app/_utils` を作成してください。
+#### 1. `app/_utils` ディレクトリ内の `GlobalLogger` フォルダにファイルを移動します。\_utils フォルダがない場合は、先に `app/_utils` を作成してください。
+
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/move-folder.png"  />
 </div>
@@ -80,15 +82,18 @@ export default prisma;
 </div>
 
 ## ロガーの使い方
+
 ### クライアント側
+
 - ページマウント時に各レベル（`trace`, `debug`, `info`, `warn`, `error`, `fatal`）で 1 件ずつログを出力し、clientLog がブラウザで正常に動作しているか確認します。
+
 ```javascript
 "use client";
 import { useEffect } from "react";
 import { clientLog } from "@/app/_utils/GlobleLogger/clientLog";
 
 export default function Page() {
-   useEffect(() => {
+  useEffect(() => {
     clientLog.trace("This is info trace");
     clientLog.debug("This is debug log");
     clientLog.info("This is info log");
@@ -104,7 +109,9 @@ export default function Page() {
   );
 }
 ```
+
 - ハンドラーを `clientLogStartEnd` でラップすることで、関数の開始・終了と、その中で出力されるカスタムログが自動的に記録されます。
+
 ```javascript
 "use client";
 import { clientLog } from "@/app/_utils/GlobleLogger/clientLog";
@@ -131,8 +138,11 @@ export default function Page() {
   );
 }
 ```
+
 ### サーバー側
+
 - `/api/users` の取得処理とエラーを `serverLog` でログ出力し、サーバー（バックエンド）側でのロギングが正しく動作しているか確認します。
+
 ```javascript
 import { NextResponse } from "next/server";
 import { logger as serverLog } from "@/app/_utils/GlobleLogger/logger";
@@ -173,26 +183,27 @@ export async function GET() {
 ```
 
 - Prisma の各クエリをバインドパラメータ込みで dbLog に出力し、サーバー側の DB ログが正しく動作しているか確認します。
+
 ```javascript
 prisma.$on("query", (e) => {
-    try {
-      const paramsArray = JSON.parse(e.params);
-      let query = e.query;
-      paramsArray.forEach((param: any, index: number) => {
-        query = query.replace(`$${index + 1}`, JSON.stringify(param));
-      });
+  try {
+    const paramsArray = JSON.parse(e.params);
+    let query = e.query;
+    paramsArray.forEach((param: any, index: number) => {
+      query = query.replace(`$${index + 1}`, JSON.stringify(param));
+    });
 
-      // Log all query
-      dbLog.info(query);
-
-    } catch (err) {
-      console.error("Failed to process query log", err);
-      console.log(e);
-    }
-  });
+    // Log all query
+    dbLog.info(query);
+  } catch (err) {
+    console.error("Failed to process query log", err);
+    console.log(e);
+  }
+});
 ```
 
 - リポジトリメソッドを `serverLogStartEnd` でラップし、関数の開始／終了、エラー、および Prisma を介した DB アクセスをすべてサーバーログに記録します。
+
 ```javascript
 import { prisma } from "@/app/_utils/prismaSingleton";
 import { serverLogStartEnd } from "@/app/_utils/GlobleLogger/serverLogStartEnd";
@@ -222,20 +233,23 @@ export namespace userRepository {
 ```
 
 ## ログの確認
+
 - プロジェクト内の `logFiles` フォルダでログファイルを確認できます。
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/log-output.png" />
 </div>
 
 ## 設定の上書き・変更
+
 - `app/_utils/GlobleLogger/config.ts` でロガー設定をカスタマイズまたは上書きできます。
+
 ```javascript
 import { configType } from "./types";
 export const config: configType = {
   path: {
-    serverLog: "./logFiles/server.log",
-    dbLog: "./logFiles/db.log",
-    clientLog: "./logFiles/client.log",
+    serverLog: "./logFiles/serverLog/server.log",
+    dbLog: "./logFiles/dbLog/db.log",
+    clientLog: "./logFiles/clientLog/client.log",
   },
   // can be used "xs" | "sm" | "md" | "lg" | "xl"
   maxLogSize: {
@@ -249,6 +263,10 @@ export const config: configType = {
     db: "trace",
     client: "trace",
   },
+  maxBackupLogFile: {
+    server: 10,
+    db: 10,
+    client: 10,
+  },
 };
-
 ```
