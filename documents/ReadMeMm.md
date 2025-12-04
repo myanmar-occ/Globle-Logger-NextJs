@@ -1,22 +1,22 @@
-This logger is built with [log4js](https://www.npmjs.com/package/log4js) for [Next.js](https://nextjs.org) applications with [Prisma](https://prisma.io) as the ORM and can be used for client, server, and database logging.
+ဒီ logger ကို [log4js](https://www.npmjs.com/package/log4js) ဖြင့် တည်ဆောက်ထားပြီး [Prisma](https://prisma.io) ကို ORM အဖြစ် အသုံးပြုသော [Next.js](https://nextjs.org) များအတွက် ဖြစ်ပါတယ်။ Client, server နှင့် database logging အတွက် အသုံးပြုနိုင်ပါတယ်။
 
-## Getting Started
+## စတင်အသုံးပြုခြင်း
 
-#### 1. Install [log4js](https://www.npmjs.com/package/log4js)
+#### 1. သွင်းယူခြင်း [log4js](https://www.npmjs.com/package/log4js)
 
 ```sh
 npm i log4js
 ```
 
-## Logger Setup
+## Logger ချိတ်ဆက်ခြင်း
 
-#### 1. Move the file into the `GlobalLogger` folder inside the `app/_utils` directory. If you don’t have an `_utils` folder yet, create `app/_utils` first.
+#### ၁။ ဖိုင်ကို `app/_utils` directory အောက်ရှိ `GlobalLogger folder` ထဲသို့ ‌ရွှေ့ပါ။ သင့်မှာ `_utils folder`မရှိသေးဘူးဆိုရင်၊ ပထမဆုံး `app/_utils` ကို ဖန်တီးပါ။
 
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/move-folder.png"  />
 </div>
 
-#### 2. Add or update the following code in your `prismaSingleton`.
+#### ၂။ အောက်ပါ code ကို သင့် `prismaSingleton` ထဲတွင် ထည့်သွင်းပါ၊ သို့မဟုတ် ပြင်ပါ။
 
 ```javascript
 import { PrismaClient } from "@prisma/client";
@@ -75,17 +75,17 @@ if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 export default prisma;
 ```
 
-#### 3. Move the file into the `clientLog` folder inside the `app/api` directory.
+#### ၃။ ဖိုင်ကို `app/api directory` အောက်ရှိ `clientLog folder` ထဲသို့ ရွှေ့ပါ။
 
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/clientLog-move-folder.png" />
 </div>
 
-## Logger Usage
+## Logger အသုံးပြုပုံ
 
 ### For Client
 
-- Logs one message for each level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`) when the page mounts, to verify that clientLog works in the browser.
+- Page mount သောအချိန်တွင် level တစ်ခုချင်းစီ (`trace`, `debug`, `info`, `warn`, `error`, `fatal`) အတွက် message တစ်ခုစီကို log ထုတ်ပေးပြီး clientLog သည် browser မှာ မှန်ကန်စွာ အလုပ်လုပ်ကြောင်းအတည်ပြုနိုင်သည်။
 
 ```javascript
 "use client";
@@ -110,7 +110,7 @@ export default function Page() {
 }
 ```
 
-- Wraps the handler with `clientLogStartEnd` so the function’s start, end, and any custom logs inside are automatically recorded.
+- Handler ထုတ်ထားသည့် `clientLogStartEnd` ဖြင့် `function` ၏ အစ၊ အဆုံးနှင့် အတွင်းရှိ စိတ်ကြိုက်မှတ်တမ်းများကို အလိုအလျောက် မှတ်တမ်းတင်နိုင်ပါသည်။
 
 ```javascript
 "use client";
@@ -141,7 +141,7 @@ export default function Page() {
 
 ### For Server
 
-- Logs a successful /api/users fetch and any errors in the route handler, to verify that serverLog works on the server (backend).
+- Route handler အတွင်း /api/users `fetch` အောင်မြင်မှုနှင့် error များကို log ထုတ်ပြီး serverLog သည် server (backend) ပေါ်တွင် မှန်ကန်စွာ အလုပ်လုပ်ကြောင်း အတည်ပြုနိုင်သည်။
 
 ```javascript
 import { NextResponse } from "next/server";
@@ -182,7 +182,7 @@ export async function GET() {
 }
 ```
 
-- Logs each Prisma database query with bound parameters using dbLog, to verify that server-side DB logging is working correctly.
+- dbLog ကို အသုံးပြု၍ Prisma database query တစ်ခုချင်းစီနှင့် bound parameters များကို log ထုတ်ပြီး server-side DB logging မှန်ကန်စွာ အလုပ်လုပ်နေကြောင်း အတည်ပြုနိုင်သည်။
 
 ```javascript
 prisma.$on("query", (e) => {
@@ -202,7 +202,7 @@ prisma.$on("query", (e) => {
 });
 ```
 
-- Wraps the repository method with serverLogStartEnd so the function’s start/end, errors, and DB access (via Prisma) are all logged on the server.
+- repository method ကို serverLogStartEnd ဖြင့် ထုပ်ပတ်ခြင်းအားဖြင့် function ၏ စတင်မှု/အဆုံးသတ်မှု၊ error များနှင့် Prisma ဖြင့် DB access များကို server ပေါ်တွင် အားလုံး log ထုတ်ပေးနိုင်သည်။
 
 ```javascript
 import { prisma } from "@/app/_utils/prismaSingleton";
@@ -232,16 +232,16 @@ export namespace userRepository {
 }
 ```
 
-## View Log
+## Log ကြည့်ခြင်း
 
-- You can view the log files in your project’s `logFiles` folder.
+- သင်၏ project အတွင်းရှိ logFiles folder မှ log files များကို ကြည့်ရှုနိုင်သည်။
 <div>
   <img height="200" src="https://github.com/myanmar-occ/Globle-Logger-NextJs/blob/main/Images/log-output.png" />
 </div>
 
-## Overwrite and Change
+## အစားထိုးရေးခြင်း နှင့် ပြောင်းလဲခြင်း
 
-- You can customize or override the logger config in `app/_utils/GlobleLogger/config.ts`.
+- app/\_utils/GlobleLogger/config.ts တွင် logger configuration ကို ကိုယ်ပိုင်စိတ်ကြိုက် ပြင်ဆင်နိုင်သည် သို့မဟုတ် အစားထိုးနိုင်သည်။
 
 ```javascript
 import { configType } from "./types";
